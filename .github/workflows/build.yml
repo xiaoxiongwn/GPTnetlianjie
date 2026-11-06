@@ -1,9 +1,10 @@
+
 name: Build Windows portable EXE
 
 on:
   workflow_dispatch:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -11,30 +12,37 @@ permissions:
 jobs:
   build:
     runs-on: windows-latest
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller
+
       - name: Build
         run: |
           pyinstaller --noconfirm --clean --onefile --windowed --name "局域共享WebDAV" --collect-all wsgidav --collect-all cheroot main.py
+
       - name: Package
-  run: |
-    New-Item -ItemType Directory -Force -Path package | Out-Null
-    Copy-Item "dist/局域共享WebDAV.exe" package/
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path package | Out-Null
+          Copy-Item "dist/局域共享WebDAV.exe" package/
 
-    if (Test-Path README.md) {
-      Copy-Item README.md package/
-    } else {
-      Set-Content -Path package/README.txt -Value "局域共享 WebDAV 绿色版使用说明"
-    }
+          if (Test-Path README.md) {
+            Copy-Item README.md package/
+          } else {
+            Set-Content -Path package/README.txt -Value "局域共享 WebDAV 绿色版使用说明"
+          }
 
-    Compress-Archive -Path package/* -DestinationPath "局域共享WebDAV-Windows-x64.zip" -Force
+          Compress-Archive -Path package/* -DestinationPath "局域共享WebDAV-Windows-x64.zip" -Force
+
       - uses: actions/upload-artifact@v4
         with:
           name: 局域共享WebDAV-Windows-x64
