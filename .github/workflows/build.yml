@@ -24,11 +24,17 @@ jobs:
         run: |
           pyinstaller --noconfirm --clean --onefile --windowed --name "局域共享WebDAV" --collect-all wsgidav --collect-all cheroot main.py
       - name: Package
-        run: |
-          New-Item -ItemType Directory -Force -Path package | Out-Null
-          Copy-Item "dist/局域共享WebDAV.exe" package/
-          Copy-Item README.md package/
-          Compress-Archive -Path package/* -DestinationPath "局域共享WebDAV-Windows-x64.zip" -Force
+  run: |
+    New-Item -ItemType Directory -Force -Path package | Out-Null
+    Copy-Item "dist/局域共享WebDAV.exe" package/
+
+    if (Test-Path README.md) {
+      Copy-Item README.md package/
+    } else {
+      Set-Content -Path package/README.txt -Value "局域共享 WebDAV 绿色版使用说明"
+    }
+
+    Compress-Archive -Path package/* -DestinationPath "局域共享WebDAV-Windows-x64.zip" -Force
       - uses: actions/upload-artifact@v4
         with:
           name: 局域共享WebDAV-Windows-x64
