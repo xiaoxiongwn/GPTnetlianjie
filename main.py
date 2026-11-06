@@ -109,8 +109,8 @@ class WebDAVGui:
             "port": port,
             "provider_mapping": {
                 "/": {
-                    "provider": "wsgidav.fs_dav_provider.FileSystemProvider",
-                    "args": {"root_path": str(folder), "readonly": self.readonly.get()},
+                    "root": str(folder),
+                    "readonly": self.readonly.get(),
                 }
             },
             "http_authenticator": {
